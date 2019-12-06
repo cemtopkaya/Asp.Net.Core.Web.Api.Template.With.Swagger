@@ -11,16 +11,16 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class SwaggerTutorialController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<SwaggerTutorialController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public SwaggerTutorialController(ILogger<SwaggerTutorialController> logger)
         {
             _logger = logger;
         }

@@ -4,6 +4,85 @@
         <name>Asp.Net.Core.Web.Api.Template.With.Swagger</name>
     </assembly>
     <members>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.ParameterBindingTutorialController.Post_FromForm(System.Int32,Asp.Net.Core.Web.Api.Template.With.Swagger.WeatherForecast)">
+            * Formun byte türünden alabileceği maksimum boyutu */
+        </member>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.SwaggerTutorialController.Get">
+            <summary>
+            PRE Etiketini ve returns XML düğümüne dair.
+            </summary>
+            
+            <remarks>
+            ### PRE Etiketini Kullanmak ###
+            HTML'in PRE etikeni Swagger UI görüntüler.
+            - Pre etiketi XML yorum düğümlerinden değildir!
+            - Ancak Pre etiketi Swagger UI tarafından görüntülenirken kullanılır
+            
+            Böylece yeni satır ve boşluk karakterleri Swagger UI içinde düzgün görüntülenir.
+            
+            <pre>
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast {
+               Date = DateTime.Now.AddDays(index),
+               TemperatureC = rng.Next(-20, 55),
+               Summary = Summaries[rng.Next(Summaries.Length)]
+            }).ToArray();
+            </pre>
+            
+            ### returns Swagger UI Tarafından İşlenmez ###
+            Swagger returns etiketini görüntülemez ! :(
+            
+            
+            </remarks>
+            <returns>Swagger returns etiketini görüntülemez ! :(</returns>
+        </member>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.SwaggerTutorialController.Get(System.Int32)">
+            <summary>
+            Markdown kullanımı ve kod örneklerinin gösterimi.
+            </summary>
+            
+            <remarks>
+            _Swagger maalesef [Tüm XML Düğümlerini](https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/y3ww3c7e(v=vs.120)) desteklemiyor!_ 
+            Bu yüzden markdown kullanarak XML yorumlarının dışında ama SwaggerUI için istenilen çıktıyı elde edebiliriz. 
+            
+            Swagger code etiketindeki bilgiyi görüntülerken renkli gösteriyor 
+            ancak line-break karakterlerini işleyemediği için tek satırda gösteriyor.
+            
+            **Bu yüzden satır sonuna \ ekliyoruz ki yeni satıra geçsin.**
+            
+            <code> \
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast { \
+                Date = DateTime.Now.AddDays(index), \
+                TemperatureC = rng.Next(-20, 55), \
+                Summary = Summaries[rng.Next(Summaries.Length)] \
+            }).ToArray(); \
+            </code>
+            
+            ### Code Etiketi ###
+            Code etiketinde yeni satıra geçmiyor, satır içi kullanılıyordu. Kod metnini işaretlemek <code>int? code=12;</code> kullanabiliriz.
+            
+            ### Markdown ###
+            Ayrıca Markdown kullanarak satır içi kod metnini işaretlemek için kesme işareti (apostrof) kullanabiliriz; `int markdown=12;` örneğindeki gibi.
+            </remarks>
+            <param name="dayCount">Tam sayı tipinde parametre.</param>
+            <returns>Sandcastle tarafından kod belgesi oluşturulurken değerlendirilir ama Swagger bu etiketi işlemez!</returns>
+        </member>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.SwaggerTutorialController.Post(System.Int32,System.Nullable{System.Int32},Asp.Net.Core.Web.Api.Template.With.Swagger.WeatherForecast)">
+            <summary>
+            Bir action için yazılabilecek XML yorum satırları ve Swagger UI çıktısına dair.
+            </summary>
+            
+            <param name="predefinedId">Kayıt edilecek bilginin önceden belirlenmiş ID değeri.</param>
+            <param name="userId">Bilgiyi kaydedecek kullanıcının ID değeri. Mecburi olmasın diye int? tipinde.</param>
+            <param name="wcast"><see cref="T:Asp.Net.Core.Web.Api.Template.With.Swagger.WeatherForecast"/> tipinde değeri metoda parametre olarak alır </param>
+            
+            <response code="200">Başarıyla tamamlanan işin açıklaması. Sorun yaşanmadı.</response>
+            <response code="201">Nesne tanımı yapıldı.</response>
+            <response code="101">Yazılmayan response kodunun açıklaması varsayılan metin olacak.</response>
+            <response code="401">Yetkisiz erişim.</response>
+            <response code="500">Sunucu hatası dönüş tipine bakmaz doğrudan string tipinde sonuç döner.</response>
+            
+            <returns>Dönen değere dair bilgi. SWAGGER Buradaki bilgiyi görüntülemiyor maalesef. Neden mi?</returns>
+        </member>
         <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.WeatherForecastController.Get">
             <summary>
             PRE Etiketini ve returns XML düğümüne dair.

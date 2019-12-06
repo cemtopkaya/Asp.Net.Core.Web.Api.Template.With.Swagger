@@ -85,6 +85,10 @@ public IHttpActionResult KullaniciAdiBaslayan(string ileBaslayan) {...
 
 ### Doğrulama (Validation) 
 #### Entity Üstünde Validasyon
+Kaynaklar: 
+- https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/validation?view=aspnetcore-3.1
+- https://wakeupandcode.com/validation-in-asp-net-core/
+
 Bir MVC uygulamasındaki varlık sınıfı (entity) için validasyonu şu şekilde yazabiliriz:
 ```csharp
 public class CinematicItem
@@ -101,6 +105,16 @@ public class CinematicItem
 
    [StringLength(255)]
    public string Synopsis { get; set; }
+
+   [Range(1, 100)]
+   [DataType(DataType.Currency)]
+   [Column(TypeName = "decimal(18, 2)")]
+   public decimal Price { get; set; }
+
+   [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
+   [Required]
+   [StringLength(30)]
+   public string Genre { get; set; }
   
    [DataType(DataType.Date)]
    [DisplayName("Available Date")]
@@ -173,6 +187,10 @@ https://stackoverflow.com/a/18276949/104085
 
 
 ### Swagger Kurulumu
+Kaynaklar:
+- https://blog.kloud.com.au/2017/08/04/swashbuckle-pro-tips-for-aspnet-web-api-part-1/
+- https://exceptionnotfound.net/adding-swagger-to-asp-net-core-web-api-using-xml-documentation/
+
 1. `Swashbuckle.AspNetCore` Paketini yükleyerek başlayalım.
 2. `Startup.cs` dosyası aşağıdaki şekilde olacak:
 ```csharp
@@ -239,7 +257,8 @@ public class Startup
 }
 ```
 
-3. Projenin özelliklerinden XML dosyası oluşturmayı açmamız gerekiyor. XML yorumlar ekleyerek SWAGGER UI'ın daha yardımcı görüntüleme yapabilmesini istiyoruz çünkü.
+3. Projenin özelliklerinden XML dosyası oluşturmayı açmamız gerekiyor. 
+   [XML yorumlar](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments) ekleyerek SWAGGER UI'ın daha yardımcı görüntüleme yapabilmesini istiyoruz çünkü.
 ![https://exceptionnotfound.net/content/images/2018/07/xml-doc-file-build.png](https://user-images.githubusercontent.com/261946/70221619-c00fa380-1759-11ea-9f77-a5295e136cb7.png)
 
 4. Ancak XML oluşturma nedeniyle bazı uyarılar alacağız aşağıdaki gibi

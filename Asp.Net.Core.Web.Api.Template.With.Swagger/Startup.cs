@@ -93,6 +93,11 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger
             });
             #endregion
 
+            app.UseCors(c =>
+            {
+                c.AllowAnyOrigin();
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
