@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,6 +37,33 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            #region Api Versiyonlama
+            services.AddApiVersioning(v =>
+            {
+                v.ReportApiVersions = true;
+                v.AssumeDefaultVersionWhenUnspecified = true;
+                v.DefaultApiVersion = new ApiVersion(1, 0);
+                /* Eðer versiyon bilgisi tarih olsun istersek: */
+                //v.DefaultApiVersion = new ApiVersion(new DateTime(2016, 7, 1));
+
+                /* Eðer header ile versiyon bilgisi göndermezsek 
+                 *   - ya URL Segment 
+                 *   - ya da Querystring 
+                 * olarak versiyon bilgisini geçirebileceðiz.
+                 * 
+                 * Eðer versiyon bilgisini HTTP Header içinde göndermek istersek
+                 * URL Segment içinde versiyon bilgisi alabilecek þekilde iþaretlenmemiþ
+                 * denetleyiciler yani Querystring ile çalýþabilen denetleyiciler 
+                 * header'dan gelen versiyon bilgisine göre çalýþabilir.
+                 * Çalýþýr  > [Route("api/versioning")]
+                 * ÇalýþMAZ > [Route("api/v{version:apiVersion}/versioning")]
+                 * 
+                 * Header içinde versiyonu taþýyan key'in ne olacaðýný burada belirtebiliriz
+                 */
+                v.ApiVersionReader = new HeaderApiVersionReader("verMEZsion");
+            });
+            #endregion
 
             #region Swagger 2.0 - OpenApi 3.0
             services.AddSwaggerGen(c =>
