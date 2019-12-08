@@ -8,7 +8,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
     public class Versioning_UrlPathSegment_Controller_v1 : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get() => Ok("URL Path Segment - version 1.0");
+        public IActionResult Get1() => Ok("URL Path Segment - version 1.0");
     }
 
     [ApiVersion("2.0")]
@@ -19,7 +19,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
     public class Versioning_UrlPathSegment_Controller_v2 : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get(ApiVersion version) => Ok(version + " URL Path Segment - version 2.0 ~ 3.1");
+        public IActionResult Get2(ApiVersion version) => Ok(version + " URL Path Segment - version 2.0 ~ 3.1");
     }
 
 
@@ -39,7 +39,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
     public class Versioning_UrlPathSegment_Controller_v4 : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get(ApiVersion v)
+        public IActionResult Get3(ApiVersion v)
         {
             return Ok(new
             {

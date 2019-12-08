@@ -26,6 +26,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
         public IActionResult Get() => Ok("QueryString - version 2.0 ~ 3.0");
     }
 
+    [ApiVersion("3.0")]
     [ApiVersion("4.0-Beta")]
     [ApiVersion("4.0")]
     [ApiVersion("4.1")]
