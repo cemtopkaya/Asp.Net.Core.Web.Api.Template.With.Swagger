@@ -261,3 +261,25 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
 
     [ApiVersion( "2.0" )]
     [ApiVersion( "1.0", Deprecated = true )]
+
+## API Tanımlamaya Dair Özet
+
+Aynı versiyon numarasını (buradaki örnekte 3.0 versiyonudur) iki denetleyici içinde kullanırsak
+ - hem Versioning_QueryString_Controller_v3 sınıfta 
+ - hem de Versioning_QueryString_Controller_v4 sınıfta 
+ 
+Swagger aynı rota bilgisine sahip uç noktaları hangi sınıfta göstereceğini bilemeyeceği için 
+uç noktayı test etmek istediğinde hata alacağı için görüntülemede de hata üretir.
+
+Bir denetleyici üstünde bir ApiVersion niteliği o denetleyicinin versiyon numarasını gösterirken
+başka ApıVersion nitelikleri Deprecated olanları işaretlemek içindir.
+
+Aynı versiyon numarası farklı denetleyicilerde kullanılırsa, eğer uç nokta rotaları çatışmıyorsa 
+sorunsuz olarak Swagger çalışır. Bu durumda örneğin 1.0 versiyonunu 2.0 versiyonunda da geçerli kılacaksak
+o zaman neden 2.0 versiyonunu yazalım ki :)
+
+Eğer 2.0 versiyonu, 1.0 versiyonunun üstüne gelecek ve yeni metotlar içerecekse "kalıtım" en iyi çözüm olacak.
+Böylece 2.0 versiyonunda 1.0 versiyonundaki metotları tekrar yazmak zorunda kalmayız. 
+Eğer 2.0 da XXX metodu daha farklı çalışacaksa 1.0 sürümündeki halini virtual diye işaretler, 2.0 da override edebiliriz.
+Eğer 1.0 versiyonunda olan bir metodu 2.0 da kullanılmaz olarak işaretlemek istersek 
+en basit haliyle override ettiğimiz metodun içinde NotFound() gönderebiliriz.

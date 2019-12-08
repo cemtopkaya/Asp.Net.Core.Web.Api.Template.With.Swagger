@@ -20,10 +20,13 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
     [ApiVersion("3.0")]
     [Route("api/versioning")]
     [ApiController]
-    public class Versioning_QueryString_Controller_v2 : ControllerBase
+    public class Versioning_QueryString_Controller_v3 : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get() => Ok("QueryString - version 2.0 ~ 3.0");
+
+        //[HttpGet]
+        //public IActionResult Get() => Ok("QueryString - version 2.0 ~ 3.0");
     }
 
     [ApiVersion("3.0")]
