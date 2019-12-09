@@ -120,18 +120,19 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
-                    Console.WriteLine("docName:" + docName);
-                    Console.WriteLine("the message:" + apiDesc.RelativePath);
+                    Console.WriteLine("docName: " + docName);
+                    Console.WriteLine("apiDesc.RelativePath: " + apiDesc.RelativePath);
                     if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
 
                     var versions = methodInfo.DeclaringType
                         .GetCustomAttributes(true)
                         .OfType<ApiVersionAttribute>()
                         .SelectMany(attr => attr.Versions);
+
+                    // test amaçlý for loop
                     foreach (var v in versions)
-                    {
                         Console.WriteLine("docName:" + docName + " <> ToString: " + v.ToString());
-                    }
+
 
                     bool b = versions.Any(v => v.ToString() == docName);
                     Console.WriteLine("Bool: " + b);
