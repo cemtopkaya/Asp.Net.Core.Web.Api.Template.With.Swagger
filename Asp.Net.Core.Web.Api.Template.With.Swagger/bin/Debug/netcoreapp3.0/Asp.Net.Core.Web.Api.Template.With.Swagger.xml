@@ -4,6 +4,28 @@
         <name>Asp.Net.Core.Web.Api.Template.With.Swagger</name>
     </assembly>
     <members>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.JsonWebTokenAuthController.GetToken(Asp.Net.Core.Web.Api.Template.With.Swagger.Model.Login)">
+            <summary>
+            Token alabilmek için kullanılır
+            </summary>
+            <remarks>
+            <code>
+            {
+              "UserName":"petro",
+              "Password":"net"
+            }
+            </code>
+            </remarks>
+            <param name="login">Kullanıcı adı ve şifresi</param>
+            <returns></returns>
+        </member>
+        <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.JsonWebTokenAuthController.GetData">
+            <summary>
+            Token doğrulama
+            </summary>
+            <response code="401">Yetkisiz erişim!</response>
+            <returns></returns>
+        </member>
         <member name="M:Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers.ParameterBindingTutorialController.Post_FromForm(System.Int32,Asp.Net.Core.Web.Api.Template.With.Swagger.WeatherForecast)">
             * Formun byte türünden alabileceği maksimum boyutu */
         </member>

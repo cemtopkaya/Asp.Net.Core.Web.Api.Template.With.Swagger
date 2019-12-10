@@ -29,14 +29,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Asp.Net.Core.Web.Api.Template.With.Swagger.Model.appsettings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
@@ -155,44 +160,88 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+            });
+            #endregion
 
-                #region Swagger için JSON Web Token Ayarlarý
+            #region Swagger için JSON Web Token Ayarlarý
+            services.AddSwaggerGen(c => {
                 var securityScheme = new OpenApiSecurityScheme {
+                    Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
                     Description = "JWT Token gerekiyor!",
-                    In = ParameterLocation.Header,
-                    Name = "authorization",
+                    In = ParameterLocation.Header, // Header içinde Bearer token key gelecek
+                    Name = "Authorization", // Header içindeki token'ýn header key bilgisi> Authorization: Bearer xlaskdfjsdf...
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 };
                 c.AddSecurityDefinition("Bearer", securityScheme);
 
                 // Security Requirement
-                var securityReq = new OpenApiSecurityRequirement();
-                var value = new List<string>();
-                securityReq.Add(securityScheme, value);
-
-                c.AddSecurityRequirement(securityReq);
-                #endregion
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement() {
+                        { securityScheme, Array.Empty<string>() }
+                    });
             });
             #endregion
 
             #region JSON Web Token ayarlarý
             var jwtSettings = new TokenSettings();
             this.Configuration.Bind("jwtSettings", jwtSettings);
-            JwtBearerExtensions.AddJwtBearer(services.AddAuthentication("Bearer"), opt => {
-                var param = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
+
+            services.AddAuthentication(opt => {
+                /**
+                 * Bir Controller niteliðinde [Authorize] kullandýðýnýzda, 
+                 * ilk yetkilendirme sistemine varsayýlan olarak baðlamasý için
+                 */
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                /**
+                 * Eðer `services.AddIdentity>()` ile bir kimlik kullanýyorsanýz, 
+                 * DefaultChallengeScheme sizi bir giriþ sayfasýna yönlendirmeye çalýþacaktýr, 
+                 * eðer bir kimlik mevcut deðilse, 404 döner. Eðer var ve yetkisiz ise 401 "yetkisiz eriþim" hatasý alacaksýnýz.
+                 */
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt => {
+                Microsoft.IdentityModel.Tokens.TokenValidationParameters param;
+
+                param = new TokenValidationParameters {
+                    // Require Bilgileri yoksa geçersiz kýl!
                     RequireSignedTokens = true,
                     RequireExpirationTime = true,
+
+                    // Neleri doðrulamasýný istiyorsak
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
+
+                    // Beklediðimiz Issuer ve Audience bilgilerini veririz
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = jwtSettings.IssuerSigningKey
+
+                    /**
+                     * Gelen token bilgisiyle, gönderdiðimizin imzasý ayný mý diye 
+                     * geleni imzalayacak ve kontrol edeceðiz
+                     */
+                    IssuerSigningKey = jwtSettings.IssuerSigningKey,
                 };
 
+                opt.RequireHttpsMetadata = false; // Production ortamý ise true yani https olsun diyebiliriz
+                opt.SaveToken = true;
                 opt.TokenValidationParameters = param;
+
+                opt.Events = new JwtBearerEvents() {
+                    OnAuthenticationFailed = context => {
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json; charset=utf-8";
+                        var message = context.Exception.ToString();
+                        var result = JsonConvert.SerializeObject(new { message });
+                        
+                        Console.WriteLine("HATA >>>> " + message);
+                        return context.Response.WriteAsync(result);
+                    }
+                };
             });
             #endregion
         }
@@ -201,6 +250,14 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
+            } else {
+                app.UseExceptionHandler("/Error/Exception");
+
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+                app.UseHsts();
+
+                app.UseHttpsRedirection();
             }
 
             #region Swagger 
@@ -217,17 +274,31 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
             });
             #endregion
 
-            #region JSON Web Token
-            app.UseAuthentication();
-            #endregion
-
-            app.UseCors(c => {
-                c.AllowAnyOrigin();
+            #region CORS - Cross Origin Resource Sharing Ayarlarý
+            /* AllowAnyOrigin: Herhangi bir domain adýndan
+             * AllowAnyMethod: Herhangi bir HTTP metoduyla (GET, POST, PATH vs)
+             * AllowAnyHeader: Herhangi bir HTTP Header bilgisiyle 
+             * Yani herkesle her durumda her þeyi paylaþ
+             */
+            app.UseCors(confPolicy => {
+                confPolicy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
             });
+            #endregion
 
             app.UseRouting();
 
+            #region JSON Web Token
+            /* app.UseAuthorization() metodu app.UseRouting() ile app.UseEndpoints() arasýnda olmalý!
+             * 
+             * Configure your application startup by adding app.UseAuthorization() 
+             * inside the call to Configure(..) in the application startup code. 
+             * The call to app.UseAuthorization() must appear between app.UseRouting() and app.UseEndpoints(...)
+             */
+            app.UseAuthentication();
             app.UseAuthorization();
+            #endregion
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
