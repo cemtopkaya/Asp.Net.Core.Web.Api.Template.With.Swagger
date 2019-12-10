@@ -78,7 +78,15 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddControllers();
+            services.AddControllers()
+                .AddXmlSerializerFormatters()
+                .AddJsonOptions(options => {
+                    // Use the default property (Pascal) casing.
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    // Configure a custom converter.
+                    //options.JsonSerializerOptions.Converters.Add(new MyCustomJsonConverter());
+                });
 
             #region Api Versiyonlama
             services.AddApiVersioning(v => {
@@ -237,7 +245,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger {
                         context.Response.ContentType = "application/json; charset=utf-8";
                         var message = context.Exception.ToString();
                         var result = JsonConvert.SerializeObject(new { message });
-                        
+
                         Console.WriteLine("HATA >>>> " + message);
                         return context.Response.WriteAsync(result);
                     }

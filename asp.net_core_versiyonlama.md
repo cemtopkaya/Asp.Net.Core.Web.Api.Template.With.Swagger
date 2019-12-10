@@ -55,6 +55,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
         [HttpGet]
         public IActionResult Get() => Ok("QueryString - version 1.0");
     }
+
     [ApiVersion("2.0")]
     [ApiVersion("3.0")]
     [Route("api/versioning")]
@@ -64,6 +65,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
         [HttpGet]
         public IActionResult Get() => Ok("QueryString - version 2.0 ~ 3.0");
     }
+
     [ApiVersion("4.0-Beta")]
     [ApiVersion("4.0")]
     [ApiVersion("4.1")]
@@ -114,6 +116,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
         [HttpGet]
         public IActionResult Get() => Ok("URL Path Segment - version 1.0");
     }
+
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/versioning")]
     [ApiController]
@@ -122,6 +125,7 @@ namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers
         [HttpGet]
         public IActionResult Get(ApiVersion version) => Ok(version + " URL Path Segment - version 2.0 ~ 3.1");
     }
+
 /* Çalıştırılamaz çünkü 3. grup string tipinde Status olmalı! */
     //[ApiVersion("3.0.1")] 
     [ApiVersion("3.0-RC2")]

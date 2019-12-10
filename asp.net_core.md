@@ -314,3 +314,38 @@ public HttpResponseMessage Post([FromBody] int id, [FromBody] string name) { ...
   -  [ModelBinder](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-3.1) kullanıyoruz  
  
 *** 
+
+### [Produces] Niteliğiyle Response Formatı
+XML Sonuçlar dönebilmek için XML Formatlayıcısını da eklememiz gerekiyor.
+
+```csharp
+public void ConfigureServices(IServiceCollection services) {
+    services.AddControllers()
+            .AddXmlSerializerFormatters()
+```
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+
+namespace Asp.Net.Core.Web.Api.Template.With.Swagger.Controllers {
+
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    public class ProducesResponseFormatController : ControllerBase {
+        [HttpGet]
+        [Produces("application/xml")]
+        public IActionResult Get() {
+            /**
+             * Anonymous tiplerin XML dönüşümleri gerçekleştirilemez. HTTP 406 hatası döner.
+             *    return Ok(new { a = "aaaa" });
+             * Bu yüzden tanımlı tiplerin nesnelerini cevap olarak dönmeliyiz
+             *    return Ok(new ConcreteClass());
+             */
+            return Ok(new Model.appsettings.TokenSettings());
+        }
+    }
+}
+```
+
+![image](https://user-images.githubusercontent.com/261946/70566359-f8bddb80-1ba4-11ea-9ab1-899dbaf697a3.png)
